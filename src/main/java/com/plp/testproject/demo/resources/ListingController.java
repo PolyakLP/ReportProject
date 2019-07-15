@@ -2,6 +2,7 @@ package com.plp.testproject.demo.resources;
 
 import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.repositories.ListingsRepository;
+import com.plp.testproject.demo.services.ListingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import java.util.List;
 public class ListingController {
 
     @Autowired
-    private ListingsRepository listingsRepository;
+    private ListingsService listingsService;
 
     @GetMapping("/listing")
-    public ResponseEntity<List<Listings>> getLocations(){
-        return new ResponseEntity<>(listingsRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<Listings>> getAllListings(){
+        return new ResponseEntity<>(listingsService.getAllListings(), HttpStatus.OK);
     }
 }

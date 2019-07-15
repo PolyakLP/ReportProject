@@ -4,6 +4,7 @@ import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.repositories.ListingStatusRepository;
 import com.plp.testproject.demo.repositories.ListingsRepository;
+import com.plp.testproject.demo.services.ListingStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,10 @@ import java.util.List;
 public class ListingStatusController {
 
     @Autowired
-    private ListingStatusRepository listingStatusRepository;
+    private ListingStatusService listingStatusService;
 
     @GetMapping("/listingStatus")
-    public ResponseEntity<List<ListingStatus>> getListingStatus(){
-        return new ResponseEntity<>(listingStatusRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<ListingStatus>> getAllListingStatus(){
+        return new ResponseEntity<>(listingStatusService.getAllListings(), HttpStatus.OK);
     }
 }

@@ -67,16 +67,6 @@ public class CurlHelper {
         listingDTOToList.add(json);
     }
 
-    public void writeToFile(List<JsonObject> lists, String fileName) throws IOException {
-        System.out.println("Start reading..."+fileName);
-        FileWriter writer = new FileWriter(new File("src/main/resources/json/", fileName));
-        for (JsonObject list : lists) {
-            writer.write(list + System.lineSeparator());
-        }
-        writer.close();
-        System.out.println("Finish reading..."+fileName);
-    }
-
     public List<JsonObject> syncLocationList(String key, String path) {
         try {
             locationDTOToList = new ArrayList<>();

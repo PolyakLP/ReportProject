@@ -35,7 +35,7 @@ public class MarketPlacesService {
         }
     }
 
-    public MarketPlaces getMarketPlaceById(Integer id) {
+    public MarketPlaces getMarketPlaceById(Long id) {
         return marketPlacesRepository.findByid(id);
     }
 
@@ -51,7 +51,7 @@ public class MarketPlacesService {
         json = parser.parse(line);
         MarketPlaces market = new MarketPlaces();
 
-        market.setId(json.getAsJsonObject().get("id").getAsInt());
+        market.setId(json.getAsJsonObject().get("id").getAsLong());
         market.setMarketplace_name(json.getAsJsonObject().get("marketplace_name").toString().substring(1,json.getAsJsonObject().get("marketplace_name").toString().length()-1));
 
         return market;

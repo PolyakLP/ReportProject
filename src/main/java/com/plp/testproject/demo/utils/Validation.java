@@ -85,7 +85,7 @@ public class Validation {
             badValues.put(list, 7);
             return false;
         } else {
-            Integer id = list.getListingstatus().getId();
+            Long id = list.getListingstatus().getId();
             if (id == null) {
                 badValues.put(list, 7);
                 return false;
@@ -102,7 +102,7 @@ public class Validation {
             badValues.put(list, 8);
             return false;
         } else {
-            Integer id = list.getMarketplaces().getId();
+            Long id = list.getMarketplaces().getId();
             if (id == null) {
                 badValues.put(list, 8);
                 return false;

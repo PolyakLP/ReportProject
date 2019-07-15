@@ -35,7 +35,7 @@ public class ListingStatusService {
         }
     }
 
-    public ListingStatus getListingStatusById(Integer id) {
+    public ListingStatus getListingStatusById(Long id) {
         return listingStatusRepository.findByid(id);
     }
 
@@ -52,9 +52,11 @@ public class ListingStatusService {
         json = parser.parse(line);
         ListingStatus listStat = new ListingStatus();
 
-        listStat.setId(json.getAsJsonObject().get("id").getAsInt());
+        listStat.setId(json.getAsJsonObject().get("id").getAsLong());
         listStat.setStatus_name(json.getAsJsonObject().get("status_name").toString().substring(1,json.getAsJsonObject().get("status_name").toString().length()-1));
 
         return listStat;
     }
+
+
 }

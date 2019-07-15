@@ -18,5 +18,11 @@ public interface ListingsRepository extends CustomRepository<Listings, Long> {
     Listings findByid(Long id);
 
 
+    Long countByMarketplaces(MarketPlaces marketPlaces);
 
+
+    //Long countByListing_price(MarketPlaces marketPlaces);
+
+//    @Query(value = "SELECT AVG(e.listing_price) FROM Listings e WHERE e.marketplaces = ?1" , nativeQuery = true)
+//    Long avarageByListing_price(Long marketId);
 }

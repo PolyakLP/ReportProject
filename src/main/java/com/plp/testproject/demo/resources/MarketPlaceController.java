@@ -2,6 +2,7 @@ package com.plp.testproject.demo.resources;
 
 import com.plp.testproject.demo.entities.MarketPlaces;
 import com.plp.testproject.demo.repositories.MarketPlacesRepository;
+import com.plp.testproject.demo.services.MarketPlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import java.util.List;
 public class MarketPlaceController {
 
     @Autowired
-    private MarketPlacesRepository marketPlacesRepository;
+    private MarketPlacesService marketPlacesService;
 
     @GetMapping("/marketplace")
-    public ResponseEntity<List<MarketPlaces>> getLocations(){
-        return new ResponseEntity<>(marketPlacesRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<MarketPlaces>> getAllMarketplaces(){
+        return new ResponseEntity<>(marketPlacesService.getAllListings(), HttpStatus.OK);
     }
 }

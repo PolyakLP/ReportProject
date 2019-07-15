@@ -7,16 +7,12 @@ import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.entities.MarketPlaces;
-import com.plp.testproject.demo.repositories.ListingStatusRepository;
 import com.plp.testproject.demo.repositories.ListingsRepository;
 import com.plp.testproject.demo.repositories.LocationsRepository;
 import com.plp.testproject.demo.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Service
@@ -44,7 +40,7 @@ public class ListingsService {
     }
 
     public Listings save(Listings listing) {
-        //locationsService.refresh(listing.getLocations());
+        //locationsService.refresh(listing.getAllMarketplaces());
         Locations loc = locationsService.findByLocation(listing.getLocations().getId());
         ListingStatus status = listingStatusService.getListingStatusById(listing.getListingstatus().getId());
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(listing.getMarketplaces().getId());
@@ -90,14 +86,14 @@ public class ListingsService {
 
         listing.setOwner_email_address(json.getAsJsonObject().get("owner_email_address").toString().substring(1, json.getAsJsonObject().get("owner_email_address").toString().length() - 1));
 
-        Integer listing_status = json.getAsJsonObject().get("listing_status").getAsInt();
+        Long listing_status = json.getAsJsonObject().get("listing_status").getAsLong();
         ListingStatus listingStatus = new ListingStatus();
         if (listingStatusService.getListingStatusById(listing_status) != null) {
             if (listingStatusService.getListingStatusById(listing_status).getStatus_name() != null) {
                 listingStatus = listingStatusService.getListingStatusById(listing_status);
             }
         }
-        Integer marketPlace = json.getAsJsonObject().get("marketplace").getAsInt();
+        Long marketPlace = json.getAsJsonObject().get("marketplace").getAsLong();
         MarketPlaces marketplace = new MarketPlaces();
         if (marketPlacesService.getMarketPlaceById(marketPlace) != null) {
             if (marketPlacesService.getMarketPlaceById(marketPlace).getMarketplace_name() != null) {
@@ -113,19 +109,7 @@ public class ListingsService {
         Locations help = new Locations();
         String loc = json.getAsJsonObject().get("location").toString().substring(1, json.getAsJsonObject().get("location").toString().length() - 1);
         help = locationsService.findByUuid(loc);
-//        List<Locations> locs = locationsService.getAllListings();
-//        String locationDB = locs.get(0).getUuid();
-//        String id = loc;
-//        for (Locations locFromList :
-//                locs) {
-//            System.out.println(locationDB);
-//            System.out.println(id);
-//            if (locFromList.getUuid().equals(loc)) {
-//                Locations getLoc = locFromList;
-//                listing.setLocations(getLoc);
-//            }
-//        }
-        if(help!=null){
+        if (help != null) {
             listing.setLocations(help);
         }
 
@@ -137,8 +121,10 @@ public class ListingsService {
         if (listing != null) {
             listingsList.add(listing);
         }
+    }
 
-
+    public List<Listings> getListingsList() {
+        return listingsList;
     }
 
     public void addToNotValid(LinkedHashMap<Listings, Integer> badValues) {
@@ -151,10 +137,27 @@ public class ListingsService {
         }
     }
 
-
     public LinkedHashMap<Listings, Integer> getListingsNotValidList() {
         return listingsNotValidList;
     }
 
 
+    public Long countByListing() {
+        return listingsRepository.count();
+    }
+
+    public Long countByMarketPlace(Long l) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.countByMarketplaces(marketPlaces);
+    }
+
+//    public Long getTotalWithMarketPlace(long l) {
+//        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+//        return listingsRepository.countByListing_price(marketPlaces);
+//    }
+
+//    public Long avgEbayListingPrice(long l){
+//        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+//        return listingsRepository.avarageByListing_price(marketPlaces.getId());
+//    }
 }

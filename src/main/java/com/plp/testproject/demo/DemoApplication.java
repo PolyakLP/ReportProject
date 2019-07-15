@@ -9,6 +9,7 @@ import com.plp.testproject.demo.repositories.LocationsRepository;
 import com.plp.testproject.demo.services.*;
 import com.plp.testproject.demo.utils.CurlHelper;
 import com.plp.testproject.demo.utils.Validation;
+import com.plp.testproject.demo.utils.WriterHelper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,24 +43,25 @@ public class DemoApplication {
         return args -> {
             try {
                 CurlHelper curl = new CurlHelper();
+                WriterHelper writer = new WriterHelper();
                 List<JsonObject> loc = new ArrayList<>();
                 loc = curl.syncLocationList(X_API_KEY, "/location");
-                curl.writeToFile(loc, "locations.json");
+                writer.writeToFile(loc, "locations.json");
                 System.out.println("Location curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/locations.json ...");
 
                 List<JsonObject> listStat = curl.syncListingStatusList(X_API_KEY, "/listingStatus");
-                curl.writeToFile(listStat, "listingstatus.json");
+                writer.writeToFile(listStat, "listingstatus.json");
                 System.out.println("ListingStatus curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/listingstatus.json ...");
 
                 List<JsonObject> market = curl.syncListingStatusList(X_API_KEY, "/marketplace");
-                curl.writeToFile(market, "marketplaces.json");
+                writer.writeToFile(market, "marketplaces.json");
                 System.out.println("MarketPlaces curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/marketplaces.json ...");
 
                 List<JsonObject> list = curl.syncListingList(X_API_KEY, "/listing");
-                curl.writeToFile(list, "listings.json");
+                writer.writeToFile(list, "listings.json");
                 System.out.println("Listing curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/listings.json ...");
 
@@ -120,7 +122,6 @@ public class DemoApplication {
         return args -> {
             try {
                 //read json and write to db
-                //List<MarketPlaces> inputList = new ArrayList<>();
                 try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "marketplaces.json"))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
@@ -142,7 +143,7 @@ public class DemoApplication {
         return args -> {
             try {
                 //read json and write to db
-                Validation validation = new Validation(listingsService,listingStatusService,marketPlacesService,locationsService);
+                Validation validation = new Validation(listingsService, listingStatusService, marketPlacesService, locationsService);
                 try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "listings.json"))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
@@ -164,6 +165,16 @@ public class DemoApplication {
                 System.out.println("Unable to save Listings: " + e.getMessage());
             }
         };
+    }
+
+    @Bean
+    @DependsOn("runnerListing")
+    CommandLineRunner runnerCreateRiport(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService) {
+        return args -> {
+            WriterHelper writer = new WriterHelper(listingsService,  locationsService,  listingStatusService,  marketPlacesService);
+            writer.createReportData( );
+        };
+
     }
 
 

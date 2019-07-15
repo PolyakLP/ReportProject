@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ListingStatusRepository extends CustomRepository<ListingStatus, Integer> {
-   ListingStatus findByid(Integer id);
+public interface ListingStatusRepository extends CustomRepository<ListingStatus, Long> {
+   ListingStatus findByid(Long id);
 }

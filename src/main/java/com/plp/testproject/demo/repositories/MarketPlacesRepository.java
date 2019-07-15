@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MarketPlacesRepository extends CustomRepository<MarketPlaces,Integer> {
-  MarketPlaces findByid(Integer id);
+public interface MarketPlacesRepository extends CustomRepository<MarketPlaces,Long> {
+  MarketPlaces findByid(Long id);
 }
