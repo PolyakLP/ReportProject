@@ -27,15 +27,18 @@ public class WriterHelper {
     private MarketPlacesService marketPlacesService;
     @Autowired
     private ListingsService listingsService;
+    @Autowired
+    private FtpClient ftpClient;
 
     public WriterHelper() {
     }
 
-    public WriterHelper(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService) {
+    public WriterHelper(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService, FtpClient ftpClient) {
         this.listingsService = listingsService;
         this.listingStatusService = listingStatusService;
         this.locationsService = locationsService;
         this.marketPlacesService = marketPlacesService;
+        this.ftpClient = ftpClient;
     }
 
     public void writeToFile(List<JsonObject> lists, String fileName) throws IOException {
@@ -48,7 +51,19 @@ public class WriterHelper {
         System.out.println("Finish reading..." + fileName);
     }
 
-    public void createReportData(/*ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService*/) {
+    public void writeToReportJson(JsonArray array, String filename) throws IOException {
+        File reportJson = new File("src/main/resources/json/report", filename);
+        FileWriter writer = new FileWriter(reportJson);
+        writer.write(array.toString());
+        writer.close();
+        FtpClient client = new FtpClient();
+        client.open();
+        client.putFileToPath(reportJson,"src/main/resources/json/report");
+        client.close();
+        System.out.println("report.json updated to FTP server");
+    }
+
+    public JsonArray createReportData() throws IOException {
 
         LocalDate beginMonth = LocalDate.parse("2018-04-01");
         LocalDate endMonth = LocalDate.parse("2018-04-30");
@@ -92,13 +107,14 @@ public class WriterHelper {
         report.addProperty("TotalAmazonPrice", totalAmazonListingPrice);
         report.addProperty("AvgAmazonPrice", avarageAmazonListingPrice);
         report.addProperty("BestListerEmail", bestListerEmail);
-        report.add("Monthly 04", monthlyReport);
+        report.add("Monthly_04", monthlyReport);
+
         JsonArray array = new JsonArray();
         array.add(report);
+        writeToReportJson(array, "report.json");
 
-        System.out.println(array);
-        System.out.println("DONE");
-
-
+        return array;
     }
+
+
 }

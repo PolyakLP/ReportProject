@@ -5,9 +5,9 @@ import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.entities.MarketPlaces;
-import com.plp.testproject.demo.repositories.LocationsRepository;
 import com.plp.testproject.demo.services.*;
 import com.plp.testproject.demo.utils.CurlHelper;
+import com.plp.testproject.demo.utils.FtpClient;
 import com.plp.testproject.demo.utils.Validation;
 import com.plp.testproject.demo.utils.WriterHelper;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @SpringBootApplication
@@ -169,10 +168,11 @@ public class DemoApplication {
 
     @Bean
     @DependsOn("runnerListing")
-    CommandLineRunner runnerCreateRiport(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService) {
+    CommandLineRunner runnerCreateRiport(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService, FtpClient ftpClient) {
         return args -> {
-            WriterHelper writer = new WriterHelper(listingsService,  locationsService,  listingStatusService,  marketPlacesService);
+            WriterHelper writer = new WriterHelper(listingsService,  locationsService,  listingStatusService,  marketPlacesService, ftpClient);
             writer.createReportData( );
+
         };
 
     }
