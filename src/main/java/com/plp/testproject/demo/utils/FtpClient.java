@@ -48,7 +48,7 @@ public class FtpClient {
         ftp.disconnect();
     }
 
-    void putFileToPath(File file, String path) throws IOException {
+    void putFileToPath(String path, File file) throws IOException {
         ftp.storeFile(path, new FileInputStream(file));
     }
 }

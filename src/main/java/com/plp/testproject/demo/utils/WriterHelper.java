@@ -52,13 +52,13 @@ public class WriterHelper {
     }
 
     public void writeToReportJson(JsonArray array, String filename) throws IOException {
-        File reportJson = new File("src/main/resources/json/report", filename);
+        File reportJson = new File("src/main/resources/json/report/", filename);
         FileWriter writer = new FileWriter(reportJson);
         writer.write(array.toString());
         writer.close();
         FtpClient client = new FtpClient();
         client.open();
-        client.putFileToPath(reportJson,"src/main/resources/json/report");
+        client.putFileToPath("/report/", reportJson);
         client.close();
         System.out.println("report.json updated to FTP server");
     }
