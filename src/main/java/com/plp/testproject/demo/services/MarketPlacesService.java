@@ -7,7 +7,6 @@ import com.plp.testproject.demo.entities.MarketPlaces;
 import com.plp.testproject.demo.repositories.MarketPlacesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,6 @@ public class MarketPlacesService {
     private MarketPlacesRepository marketPlacesRepository;
 
     private List<MarketPlaces> marketPlacesList = new ArrayList<>();
-
 
     public List<MarketPlaces> getAllListings() {
         return marketPlacesRepository.findAll();

@@ -4,16 +4,12 @@ import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.entities.MarketPlaces;
-import com.plp.testproject.demo.repositories.ListingStatusRepository;
-import com.plp.testproject.demo.repositories.LocationsRepository;
-import com.plp.testproject.demo.repositories.MarketPlacesRepository;
 import com.plp.testproject.demo.services.ListingStatusService;
 import com.plp.testproject.demo.services.ListingsService;
 import com.plp.testproject.demo.services.LocationsService;
 import com.plp.testproject.demo.services.MarketPlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.File;
@@ -24,15 +20,10 @@ import java.util.*;
 @Service
 public class Validation {
 
-    List<Listings> good = new ArrayList<>();
-    List<Listings> bad = new ArrayList<>();
-    List<Listings> outList = new ArrayList<>();
     LinkedHashMap<Listings, Integer> badValues = new LinkedHashMap<>();
 
     @Autowired
     private LocationsService locationsService;
-    @Autowired
-    private LocationsRepository locationsRepository;
     @Autowired
     private ListingStatusService listingStatusService;
     @Autowired
@@ -196,8 +187,6 @@ public class Validation {
             }
             writer.close();
             System.out.println("End writing to CSV...");
-            good.clear();
-            bad.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }

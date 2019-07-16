@@ -3,7 +3,6 @@ package com.plp.testproject.demo.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "LOCATIONS")
@@ -15,21 +14,25 @@ public class Locations extends BaseEntity {
 
     @Column(name = "uuid", updatable = false, nullable = false)
     private String uuid;
-    //
-
 
     @Column(columnDefinition = "text")
     private String manager_name;
+
     @Column(columnDefinition = "text")
     private String phone;
+
     @Column(columnDefinition = "text")
     private String address_primary;
+
     @Column(columnDefinition = "text")
     private String address_secondary;
+
     @Column(columnDefinition = "text")
     private String country;
+
     @Column(columnDefinition = "text")
     private String town;
+
     @Column(columnDefinition = "text")
     private String postal_code;
 

@@ -1,28 +1,36 @@
 package com.plp.testproject.demo.repositories;
 
-import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
-import com.plp.testproject.demo.entities.Locations;
-import com.plp.testproject.demo.entities.MarketPlaces;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+
 
 @Repository
 public interface ListingsRepository extends CustomRepository<Listings, Long> {
-   // List<Listings> findByLocations(Long locId);
     Listings findByid(Long id);
 
+    @Query(value = "SELECT  COUNT(l) FROM Listings l WHERE l.marketplace_id= :marketId GROUP BY l.marketplace_id;", nativeQuery = true)
+    Long countByMarketplaces(Long marketId);
 
-    Long countByMarketplaces(MarketPlaces marketPlaces);
+    @Query(value = "SELECT  MAX(l.listing_price) FROM Listings l WHERE l.marketplace_id= :marketId GROUP BY l.marketplace_id;", nativeQuery = true)
+    BigDecimal countListingPrice(@Param("marketId")Long marketId);
 
+    @Query(value = "SELECT  AVG(l.listing_price) FROM Listings l WHERE l.marketplace_id= :marketId GROUP BY l.marketplace_id;", nativeQuery = true)
+    Long avgListingPrice(@Param("marketId")Long marketId);
 
-    //Long countByListing_price(MarketPlaces marketPlaces);
+    @Query(value = "select count(listing_price), owner_email_address\n" +
+            "            FROM public.listings\n" +
+            "            group by owner_email_address\n" +
+            "            order by count DESC;",nativeQuery = true)
+    List<String> bestLister();
 
-//    @Query(value = "SELECT AVG(e.listing_price) FROM Listings e WHERE e.marketplaces = ?1" , nativeQuery = true)
-//    Long avarageByListing_price(Long marketId);
+    //SELECT  *
+    //  FROM public.listings
+    //  where upload_time between '2018-06-01' And  '2019-01-01';
+    
+
 }

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.Date;
 
 
 @Entity
@@ -22,19 +22,22 @@ public class Listings extends BaseEntity {
     @Column(name = "uuid", updatable = false, nullable = false)
     private String uuid;
 
-
     @Column(columnDefinition = "text", length = 3)
     private String currency;
+
     @Column(columnDefinition = "text")
     private String title;
+
     @Column(columnDefinition = "text")
     private String description;
-    @Column(columnDefinition = "text")
-    private String upload_time;
+
     @Column(columnDefinition = "text")
     private String owner_email_address;
 
+    private LocalDate upload_time;
+
     private Integer quantity;
+
     private BigDecimal listing_price;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
@@ -56,7 +59,7 @@ public class Listings extends BaseEntity {
     private MarketPlaces marketplaces;
 
 
-    public Listings(Long id, String uuid, String currency, String title, String description, String upload_time, String owner_email_address, Integer quantity, BigDecimal listing_price, Locations locations, ListingStatus listingstatus, MarketPlaces marketplaces) {
+    public Listings(Long id, String uuid, String currency, String title, String description, LocalDate upload_time, String owner_email_address, Integer quantity, BigDecimal listing_price, Locations locations, ListingStatus listingstatus, MarketPlaces marketplaces) {
         this.id = id;
         this.uuid = uuid;
         this.currency = currency;
@@ -114,11 +117,11 @@ public class Listings extends BaseEntity {
         this.description = description;
     }
 
-    public String getUpload_time() {
+    public LocalDate getUpload_time() {
         return upload_time;
     }
 
-    public void setUpload_time(String upload_time) {
+    public void setUpload_time(LocalDate upload_time) {
         this.upload_time = upload_time;
     }
 

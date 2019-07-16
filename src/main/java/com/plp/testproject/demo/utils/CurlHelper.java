@@ -3,13 +3,10 @@ package com.plp.testproject.demo.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
-import com.plp.testproject.demo.entities.Listings;
-import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.repositories.ListingsRepository;
 import com.plp.testproject.demo.repositories.LocationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

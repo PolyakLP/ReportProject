@@ -1,7 +1,6 @@
 package com.plp.testproject.demo.resources;
 
 import com.plp.testproject.demo.entities.MarketPlaces;
-import com.plp.testproject.demo.repositories.MarketPlacesRepository;
 import com.plp.testproject.demo.services.MarketPlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

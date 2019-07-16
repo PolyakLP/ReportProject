@@ -1,21 +1,17 @@
 package com.plp.testproject.demo.utils;
 
 import com.google.gson.JsonObject;
-import com.plp.testproject.demo.entities.ListingStatus;
-import com.plp.testproject.demo.entities.Listings;
-import com.plp.testproject.demo.entities.Locations;
-import com.plp.testproject.demo.entities.MarketPlaces;
 import com.plp.testproject.demo.services.ListingStatusService;
 import com.plp.testproject.demo.services.ListingsService;
 import com.plp.testproject.demo.services.LocationsService;
 import com.plp.testproject.demo.services.MarketPlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -52,22 +48,19 @@ public class WriterHelper {
 
     public void createReportData(/*ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService*/) {
 
-//        List<ListingStatus> listingStatus = this.listingStatusService.getAllLocations();
-//        List<MarketPlaces> marketPlace = this.marketPlacesService.getAllLocations();
-//        List<Locations> location = this.locationsService.getAllLocations();
-//        List<Listings> listing = this.listingsService.getAllLocations();
-        // EBAY:1
-        //AMAZON:2
-        //ACTIVE: 1
-        //SCHEDULED: 2
-        //CANCELED: 3
         Long totalListingCount = this.listingsService.countByListing();
-        Long totalEbayListing = this.listingsService.countByMarketPlace(1L);
-        //Long totalEbayListingPrice = this.listingsService.getTotalWithMarketPlace(1L);
-        //Long avarageEbayListingPrice = this.listingsService.avgEbayListingPrice(1L);
-        Long totalAmazonListing = this.listingsService.countByMarketPlace(2L);
-        
 
-        System.out.println("Fákjú");
+        Long totalEbayListing = this.listingsService.countByMarketPlace(1L);
+        BigDecimal totalEbayListingPrice = this.listingsService.getMaxListingPriceWithMarketPlace(1L);
+        Long avarageEbayListingPrice = this.listingsService.avgMarketListingPrice(1L);
+
+        Long totalAmazonListing = this.listingsService.countByMarketPlace(2L);
+        BigDecimal totalAmazonListingPrice = this.listingsService.getMaxListingPriceWithMarketPlace(2L);
+        Long avarageAmazonListingPrice = this.listingsService.avgMarketListingPrice(2L);
+
+        String bestListerEmail = this.listingsService.getBestListerEmail();
+
+      //  BigDecimal totalEbayListingPricePerMonth = this.listingsService.getByMonths();
+
     }
 }

@@ -12,7 +12,11 @@ import com.plp.testproject.demo.repositories.LocationsRepository;
 import com.plp.testproject.demo.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -32,7 +36,7 @@ public class ListingsService {
     private LocationsRepository locationsRepository;
 
     private List<Listings> listingsList = new ArrayList<>();
-    //private List<Listings> listingsNotValidList = new ArrayList<>();
+
     private LinkedHashMap<Listings, Integer> listingsNotValidList = new LinkedHashMap<>();
 
     public List<Listings> getAllListings() {
@@ -54,7 +58,6 @@ public class ListingsService {
         if (marketPlaces == null) {
             marketPlacesService.save(marketPlaces);
         }
-
         listing.setLocations(loc);
         listing.setListingstatus(status);
         listing.setMarketplaces(marketPlaces);
@@ -64,7 +67,7 @@ public class ListingsService {
     }
 
 
-    public Listings getFromJson(String line) {
+    public Listings getFromJson(String line) throws ParseException {
         Listings listing = new Listings();
         JsonElement json = new JsonObject();
         JsonParser parser = new JsonParser();
@@ -78,14 +81,16 @@ public class ListingsService {
         listing.setListing_price(json.getAsJsonObject().get("listing_price").getAsBigDecimal());
         listing.setCurrency(currency.substring(1, currency.length() - 1));
         listing.setQuantity(json.getAsJsonObject().get("quantity").getAsInt());
-
-        listing.setUpload_time(json.getAsJsonObject().get("upload_time").toString().substring(1, json.getAsJsonObject().get("upload_time").toString().length() - 1));
-        if (listing.getUpload_time().length() == 2) {
+        String incomeDate = json.getAsJsonObject().get("upload_time").toString().substring(1, json.getAsJsonObject().get("upload_time").toString().length() - 1);
+        if (!incomeDate.equals(null) && !incomeDate.equals("ul")) {
+            //11/5/2018
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+            LocalDate localDate = LocalDate.parse(incomeDate, formatter);
+            listing.setUpload_time(localDate);
+        }else{
             listing.setUpload_time(null);
         }
-
         listing.setOwner_email_address(json.getAsJsonObject().get("owner_email_address").toString().substring(1, json.getAsJsonObject().get("owner_email_address").toString().length() - 1));
-
         Long listing_status = json.getAsJsonObject().get("listing_status").getAsLong();
         ListingStatus listingStatus = new ListingStatus();
         if (listingStatusService.getListingStatusById(listing_status) != null) {
@@ -148,16 +153,24 @@ public class ListingsService {
 
     public Long countByMarketPlace(Long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.countByMarketplaces(marketPlaces);
+        return listingsRepository.countByMarketplaces(marketPlaces.getId());
     }
 
-//    public Long getTotalWithMarketPlace(long l) {
-//        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-//        return listingsRepository.countByListing_price(marketPlaces);
-//    }
+    public Long avgMarketListingPrice(long l) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.avgListingPrice(marketPlaces.getId());
+    }
 
-//    public Long avgEbayListingPrice(long l){
-//        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-//        return listingsRepository.avarageByListing_price(marketPlaces.getId());
-//    }
+    public BigDecimal getMaxListingPriceWithMarketPlace(long l) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.countListingPrice(marketPlaces.getId()).setScale(2);
+    }
+
+
+    public String getBestListerEmail() {
+        if (listingsRepository.bestLister().size() > 1) {
+            return listingsRepository.bestLister().get(0);
+        }
+        return null;
+    }
 }
