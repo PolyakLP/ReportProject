@@ -12,9 +12,9 @@ import com.plp.testproject.demo.repositories.LocationsRepository;
 import com.plp.testproject.demo.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -87,7 +87,7 @@ public class ListingsService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             LocalDate localDate = LocalDate.parse(incomeDate, formatter);
             listing.setUpload_time(localDate);
-        }else{
+        } else {
             listing.setUpload_time(null);
         }
         listing.setOwner_email_address(json.getAsJsonObject().get("owner_email_address").toString().substring(1, json.getAsJsonObject().get("owner_email_address").toString().length() - 1));
@@ -153,17 +153,17 @@ public class ListingsService {
 
     public Long countByMarketPlace(Long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.countByMarketplaces(marketPlaces.getId());
+        return listingsRepository.countByListingWithMarket(marketPlaces.getId());
     }
 
-    public Long avgMarketListingPrice(long l) {
+    public BigDecimal avgMarketListingPrice(long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.avgListingPrice(marketPlaces.getId());
+        return listingsRepository.avgListingPrice(marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
     }
 
-    public BigDecimal getMaxListingPriceWithMarketPlace(long l) {
+    public BigDecimal getTotalListingPriceWithMarketPlace(long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.countListingPrice(marketPlaces.getId()).setScale(2);
+        return listingsRepository.sumListingPriceWithMarket(marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
     }
 
 
@@ -172,5 +172,28 @@ public class ListingsService {
             return listingsRepository.bestLister().get(0);
         }
         return null;
+    }
+
+    public String getBestListerEmailMonth(LocalDate beginMonth, LocalDate endMonth) {
+        if (listingsRepository.bestListerMonths(beginMonth, endMonth).size() > 1) {
+            return listingsRepository.bestListerMonths(beginMonth, endMonth).get(0);
+        }
+        return null;
+    }
+
+    public Long getByMonthsTotalListPriceWithMarket(Long l, LocalDate beginMonth, LocalDate endMonth) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.countByMarketplacesMonths(beginMonth, endMonth, marketPlaces.getId());
+    }
+
+
+    public BigDecimal getMarketTotalListingPrice(Long l, LocalDate beginMonth, LocalDate endMonth) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.sumTotalMarketplacesMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
+    }
+
+    public BigDecimal getAvgMarketListingPrice(Long l, LocalDate beginMonth, LocalDate endMonth) {
+        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
+        return listingsRepository.avgMarketListingPriceMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
     }
 }

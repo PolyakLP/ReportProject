@@ -1,5 +1,6 @@
 package com.plp.testproject.demo.utils;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.plp.testproject.demo.services.ListingStatusService;
 import com.plp.testproject.demo.services.ListingsService;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -48,19 +50,55 @@ public class WriterHelper {
 
     public void createReportData(/*ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService*/) {
 
+        LocalDate beginMonth = LocalDate.parse("2018-04-01");
+        LocalDate endMonth = LocalDate.parse("2018-04-30");
+        Long EBAY = 1L;
+        Long AMAZON = 2L;
+
+        //Report
         Long totalListingCount = this.listingsService.countByListing();
-
-        Long totalEbayListing = this.listingsService.countByMarketPlace(1L);
-        BigDecimal totalEbayListingPrice = this.listingsService.getMaxListingPriceWithMarketPlace(1L);
-        Long avarageEbayListingPrice = this.listingsService.avgMarketListingPrice(1L);
-
-        Long totalAmazonListing = this.listingsService.countByMarketPlace(2L);
-        BigDecimal totalAmazonListingPrice = this.listingsService.getMaxListingPriceWithMarketPlace(2L);
-        Long avarageAmazonListingPrice = this.listingsService.avgMarketListingPrice(2L);
-
+        Long totalEbayListing = this.listingsService.countByMarketPlace(EBAY);
+        BigDecimal totalEbayListingPrice = this.listingsService.getTotalListingPriceWithMarketPlace(EBAY);
+        BigDecimal avarageEbayListingPrice = this.listingsService.avgMarketListingPrice(EBAY);
+        Long totalAmazonListing = this.listingsService.countByMarketPlace(AMAZON);
+        BigDecimal totalAmazonListingPrice = this.listingsService.getTotalListingPriceWithMarketPlace(AMAZON);
+        BigDecimal avarageAmazonListingPrice = this.listingsService.avgMarketListingPrice(AMAZON);
         String bestListerEmail = this.listingsService.getBestListerEmail();
 
-      //  BigDecimal totalEbayListingPricePerMonth = this.listingsService.getByMonths();
+        //Monthly reports get
+        Long totalEbayListingCountPerMonth = this.listingsService.getByMonthsTotalListPriceWithMarket(EBAY, beginMonth, endMonth);
+        BigDecimal totalEbayListingPricePerMonth = this.listingsService.getMarketTotalListingPrice(EBAY, beginMonth, endMonth);
+        BigDecimal avgEbayListingPriceMonths = this.listingsService.getAvgMarketListingPrice(EBAY, beginMonth, endMonth);
+        BigDecimal avgAmazonListingPriceMonths = this.listingsService.getAvgMarketListingPrice(AMAZON, beginMonth, endMonth);
+        BigDecimal totalAmazonListingPricePerMonth = this.listingsService.getMarketTotalListingPrice(AMAZON, beginMonth, endMonth);
+        Long totalAmazonListingCountPerMonth = this.listingsService.getByMonthsTotalListPriceWithMarket(AMAZON, beginMonth, endMonth);
+        String bestListerEmailMonths = this.listingsService.getBestListerEmailMonth(beginMonth, endMonth);
+
+        JsonObject monthlyReport = new JsonObject();
+        monthlyReport.addProperty("TotalEbayCount", totalEbayListingCountPerMonth);
+        monthlyReport.addProperty("TotalEbayPrice", totalEbayListingPricePerMonth);
+        monthlyReport.addProperty("AvgEbayPrice", avgEbayListingPriceMonths);
+        monthlyReport.addProperty("AvgAmazonPrice", avgAmazonListingPriceMonths);
+        monthlyReport.addProperty("TotalAmazonPrice", totalAmazonListingPricePerMonth);
+        monthlyReport.addProperty("TotalAmazonCount", totalAmazonListingCountPerMonth);
+        monthlyReport.addProperty("BestListerEmail", bestListerEmailMonths);
+
+        JsonObject report = new JsonObject();
+        report.addProperty("TotalCount", totalListingCount);
+        report.addProperty("TotalEbayCount", totalEbayListing);
+        report.addProperty("TotalEbayPrice", totalEbayListingPrice);
+        report.addProperty("AvgEbayPrice", avarageEbayListingPrice);
+        report.addProperty("TotalAmazonCount", totalAmazonListing);
+        report.addProperty("TotalAmazonPrice", totalAmazonListingPrice);
+        report.addProperty("AvgAmazonPrice", avarageAmazonListingPrice);
+        report.addProperty("BestListerEmail", bestListerEmail);
+        report.add("Monthly 04", monthlyReport);
+        JsonArray array = new JsonArray();
+        array.add(report);
+
+        System.out.println(array);
+        System.out.println("DONE");
+
 
     }
 }
