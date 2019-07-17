@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ListingStatusRepository extends CustomRepository<ListingStatus, Long> {
-   ListingStatus findByid(Long id);
+    ListingStatus findByid(Long id);
 }

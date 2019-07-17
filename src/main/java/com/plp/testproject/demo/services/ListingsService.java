@@ -1,7 +1,6 @@
 package com.plp.testproject.demo.services;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.plp.testproject.demo.entities.ListingStatus;
 import com.plp.testproject.demo.entities.Listings;
@@ -35,6 +34,7 @@ public class ListingsService {
     @Autowired
     private LocationsRepository locationsRepository;
 
+
     private List<Listings> listingsList = new ArrayList<>();
 
     private LinkedHashMap<Listings, Integer> listingsNotValidList = new LinkedHashMap<>();
@@ -44,34 +44,14 @@ public class ListingsService {
     }
 
     public Listings save(Listings listing) {
-        //locationsService.refresh(listing.getAllMarketplaces());
-        Locations loc = locationsService.findByLocation(listing.getLocations().getId());
-        ListingStatus status = listingStatusService.getListingStatusById(listing.getListingstatus().getId());
-        MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(listing.getMarketplaces().getId());
-        System.out.println(listing);
-        if (loc == null) {
-            loc = locationsService.save(loc);
-        }
-        if (status == null) {
-            status = listingStatusService.save(status);
-        }
-        if (marketPlaces == null) {
-            marketPlacesService.save(marketPlaces);
-        }
-        listing.setLocations(loc);
-        listing.setListingstatus(status);
-        listing.setMarketplaces(marketPlaces);
-
-        System.out.println(listing);
         return listingsRepository.save(listing);
     }
 
-
     public Listings getFromJson(String line) throws ParseException {
         Listings listing = new Listings();
-        JsonElement json = new JsonObject();
         JsonParser parser = new JsonParser();
-        json = parser.parse(line);
+        JsonElement json = parser.parse(line);
+
         String uid = json.getAsJsonObject().get("id").toString().substring(1, json.getAsJsonObject().get("id").toString().length() - 1);
         String currency = json.getAsJsonObject().get("currency").toString();
 
@@ -83,7 +63,6 @@ public class ListingsService {
         listing.setQuantity(json.getAsJsonObject().get("quantity").getAsInt());
         String incomeDate = json.getAsJsonObject().get("upload_time").toString().substring(1, json.getAsJsonObject().get("upload_time").toString().length() - 1);
         if (!incomeDate.equals(null) && !incomeDate.equals("ul")) {
-            //11/5/2018
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             LocalDate localDate = LocalDate.parse(incomeDate, formatter);
             listing.setUpload_time(localDate);
@@ -111,9 +90,8 @@ public class ListingsService {
         if (marketplace.getMarketplace_name() != null) {
             listing.setMarketplaces(marketplace);
         }
-        Locations help = new Locations();
         String loc = json.getAsJsonObject().get("location").toString().substring(1, json.getAsJsonObject().get("location").toString().length() - 1);
-        help = locationsService.findByUuid(loc);
+        Locations help = locationsService.findByUuid(loc);
         if (help != null) {
             listing.setLocations(help);
         }
@@ -121,15 +99,10 @@ public class ListingsService {
         return listing;
     }
 
-
     public void addToList(Listings listing) {
         if (listing != null) {
             listingsList.add(listing);
         }
-    }
-
-    public List<Listings> getListingsList() {
-        return listingsList;
     }
 
     public void addToNotValid(LinkedHashMap<Listings, Integer> badValues) {
@@ -146,7 +119,6 @@ public class ListingsService {
         return listingsNotValidList;
     }
 
-
     public Long countByListing() {
         return listingsRepository.count();
     }
@@ -158,14 +130,13 @@ public class ListingsService {
 
     public BigDecimal avgMarketListingPrice(long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.avgListingPrice(marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
+        return listingsRepository.avgListingPrice(marketPlaces.getId()).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getTotalListingPriceWithMarketPlace(long l) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.sumListingPriceWithMarket(marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
+        return listingsRepository.sumListingPriceWithMarket(marketPlaces.getId()).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
-
 
     public String getBestListerEmail() {
         if (listingsRepository.bestLister().size() > 1) {
@@ -186,14 +157,13 @@ public class ListingsService {
         return listingsRepository.countByMarketplacesMonths(beginMonth, endMonth, marketPlaces.getId());
     }
 
-
     public BigDecimal getMarketTotalListingPrice(Long l, LocalDate beginMonth, LocalDate endMonth) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.sumTotalMarketplacesMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
+        return listingsRepository.sumTotalMarketplacesMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getAvgMarketListingPrice(Long l, LocalDate beginMonth, LocalDate endMonth) {
         MarketPlaces marketPlaces = marketPlacesService.getMarketPlaceById(l);
-        return listingsRepository.avgMarketListingPriceMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2,BigDecimal.ROUND_HALF_UP);
+        return listingsRepository.avgMarketListingPriceMonths(beginMonth, endMonth, marketPlaces.getId()).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }

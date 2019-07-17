@@ -10,6 +10,7 @@ import com.plp.testproject.demo.services.LocationsService;
 import com.plp.testproject.demo.services.MarketPlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.File;
@@ -39,11 +40,9 @@ public class Validation {
         this.listingsService = listingsService;
     }
 
-
     public boolean validate(Listings list) {
 
         if (list.getUuid() == null) {
-            //bad.add(list);
             badValues.put(list, 1);
             return false;
         }
@@ -81,8 +80,7 @@ public class Validation {
                 badValues.put(list, 7);
                 return false;
             } else {
-                ListingStatus status = new ListingStatus();
-                status = listingStatusService.getListingStatusById(id);
+                ListingStatus status = listingStatusService.getListingStatusById(id);
                 if (status == null) {
                     badValues.put(list, 7);
                     return false;
@@ -98,8 +96,7 @@ public class Validation {
                 badValues.put(list, 8);
                 return false;
             } else {
-                MarketPlaces market = new MarketPlaces();
-                market = marketPlacesService.getMarketPlaceById(id);
+                MarketPlaces market = marketPlacesService.getMarketPlaceById(id);
                 if (market == null) {
                     badValues.put(list, 8);
                     return false;
@@ -130,12 +127,10 @@ public class Validation {
         return true;
     }
 
-
     public void writeList(LinkedHashMap<Listings, Integer> listingsNotValidList) {
         try {
             System.out.println("Start writing to CSV...");
-
-            FileWriter writer = new FileWriter(new File("src/main/resources/csv/", "importLog.csv"));
+            FileWriter writer = new FileWriter(new File(GlobalHelper.CSV_FILES, GlobalHelper.IMPORTLOG));
             for (Map.Entry<Listings, Integer> entry : listingsNotValidList.entrySet()) {
                 Listings key = entry.getKey();
                 Integer value = entry.getValue();
@@ -207,7 +202,4 @@ public class Validation {
         return badValues;
     }
 
-    public void setBadValues(LinkedHashMap<Listings, Integer> badValues) {
-        this.badValues = badValues;
-    }
 }

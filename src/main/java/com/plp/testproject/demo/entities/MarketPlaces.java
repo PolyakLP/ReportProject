@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class MarketPlaces {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     private String marketplace_name;

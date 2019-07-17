@@ -13,34 +13,24 @@ import java.io.PrintWriter;
 @Component
 public class FtpClient {
 
-    private String server = "192.168.1.101";
-    private int port = 8082;
-    private String user = "root";
-    private String password = "root";
+    private String server = GlobalHelper.FTP_SERVER_NAME;
+    private int port = GlobalHelper.FTP_SERVER_PORT;
+    private String user = GlobalHelper.FTP_USERNAME;
+    private String password = GlobalHelper.FTP_PASSWORD;
     private FTPClient ftp;
 
     public FtpClient() {
     }
 
-    public FtpClient(String server, int port, String user, String password) {
-        this.server = server;
-        this.port = port;
-        this.user = user;
-        this.password = password;
-    }
-
     void open() throws IOException {
         ftp = new FTPClient();
-
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
-
         ftp.connect(server, port);
         int reply = ftp.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             ftp.disconnect();
             throw new IOException("Exception in connecting to FTP Server");
         }
-
         ftp.login(user, password);
     }
 

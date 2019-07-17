@@ -17,7 +17,7 @@ public class MarketPlaceController {
     private MarketPlacesService marketPlacesService;
 
     @GetMapping("/marketplace")
-    public ResponseEntity<List<MarketPlaces>> getAllMarketplaces(){
+    public ResponseEntity<List<MarketPlaces>> getAllMarketplaces() {
         return new ResponseEntity<>(marketPlacesService.getAllListings(), HttpStatus.OK);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class ListingStatusController {
     private ListingStatusService listingStatusService;
 
     @GetMapping("/listingStatus")
-    public ResponseEntity<List<ListingStatus>> getAllListingStatus(){
+    public ResponseEntity<List<ListingStatus>> getAllListingStatus() {
         return new ResponseEntity<>(listingStatusService.getAllListings(), HttpStatus.OK);
     }
 }

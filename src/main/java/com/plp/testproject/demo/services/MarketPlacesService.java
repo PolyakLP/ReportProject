@@ -1,12 +1,12 @@
 package com.plp.testproject.demo.services;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.plp.testproject.demo.entities.MarketPlaces;
 import com.plp.testproject.demo.repositories.MarketPlacesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +26,6 @@ public class MarketPlacesService {
         return marketPlacesRepository.save(location);
     }
 
-    public void saveList(List<MarketPlaces> location) {
-        for (MarketPlaces list :
-                location) {
-            marketPlacesRepository.save(list);
-        }
-    }
-
     public MarketPlaces getMarketPlaceById(Long id) {
         return marketPlacesRepository.findByid(id);
     }
@@ -44,13 +37,13 @@ public class MarketPlacesService {
     }
 
     public MarketPlaces getFromJson(String line) {
-        JsonElement json = new JsonObject();
+
         JsonParser parser = new JsonParser();
-        json = parser.parse(line);
+        JsonElement json = parser.parse(line);
         MarketPlaces market = new MarketPlaces();
 
         market.setId(json.getAsJsonObject().get("id").getAsLong());
-        market.setMarketplace_name(json.getAsJsonObject().get("marketplace_name").toString().substring(1,json.getAsJsonObject().get("marketplace_name").toString().length()-1));
+        market.setMarketplace_name(json.getAsJsonObject().get("marketplace_name").toString().substring(1, json.getAsJsonObject().get("marketplace_name").toString().length() - 1));
 
         return market;
     }

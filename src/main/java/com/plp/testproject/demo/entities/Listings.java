@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 @Entity
@@ -57,7 +57,6 @@ public class Listings extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private MarketPlaces marketplaces;
-
 
     public Listings(Long id, String uuid, String currency, String title, String description, LocalDate upload_time, String owner_email_address, Integer quantity, BigDecimal listing_price, Locations locations, ListingStatus listingstatus, MarketPlaces marketplaces) {
         this.id = id;

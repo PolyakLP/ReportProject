@@ -1,12 +1,12 @@
 package com.plp.testproject.demo.services;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.repositories.LocationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,33 +22,17 @@ public class LocationsService {
 
     private List<Locations> locationList = new ArrayList<>();
 
-
     public List<Locations> getAllLocations() {
         return locationRepository.findAll();
     }
-
-
 
     public Locations save(Locations location) {
         return locationRepository.save(location);
     }
 
-    public void saveList(List<Locations> location) {
-        for (Locations list :
-                location) {
-            locationRepository.save(list);
-        }
-    }
-
-    public Locations getLocationById(Long id) {
-        Locations loc = locationRepository.findByid(id);
-        return loc;
-    }
-
     public Locations getFromJson(String line) {
-        JsonElement json = new JsonObject();
         JsonParser parser = new JsonParser();
-        json = parser.parse(line);
+        JsonElement json = parser.parse(line);
         Locations location = new Locations();
 
         location.setUuid(json.getAsJsonObject().get("id").toString().substring(1, json.getAsJsonObject().get("id").toString().length() - 1));
@@ -61,12 +45,11 @@ public class LocationsService {
         location.setTown(json.getAsJsonObject().get("town").toString().substring(1, json.getAsJsonObject().get("town").toString().length() - 1));
         location.setPostal_code(json.getAsJsonObject().get("postal_code").toString().substring(1, json.getAsJsonObject().get("postal_code").toString().length() - 1));
 
-        if(locationRepository.findByUuid(location.getUuid())!=null){
+        if (locationRepository.findByUuid(location.getUuid()) != null) {
             location = locationRepository.findByUuid(location.getUuid());
         }
         return location;
     }
-
 
     public void addToList(Locations location) {
         if (location.getUuid() != null) {
@@ -78,11 +61,8 @@ public class LocationsService {
         return locationRepository.findByid(id);
     }
 
-    public Locations findByUuid(String uuid){
+    public Locations findByUuid(String uuid) {
         return locationRepository.findByUuid(uuid);
     }
 
-    public void refresh(Locations help) {
-        locationRepository.refresh(help);
-    }
 }

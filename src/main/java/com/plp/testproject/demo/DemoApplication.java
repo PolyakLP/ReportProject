@@ -6,10 +6,7 @@ import com.plp.testproject.demo.entities.Listings;
 import com.plp.testproject.demo.entities.Locations;
 import com.plp.testproject.demo.entities.MarketPlaces;
 import com.plp.testproject.demo.services.*;
-import com.plp.testproject.demo.utils.CurlHelper;
-import com.plp.testproject.demo.utils.FtpClient;
-import com.plp.testproject.demo.utils.Validation;
-import com.plp.testproject.demo.utils.WriterHelper;
+import com.plp.testproject.demo.utils.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -34,33 +30,29 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 
-
-    private static final String X_API_KEY = "63304c70";
-
     @Bean
     CommandLineRunner getCurlData(CurlHelper curlHelper) {
         return args -> {
             try {
                 CurlHelper curl = new CurlHelper();
                 WriterHelper writer = new WriterHelper();
-                List<JsonObject> loc = new ArrayList<>();
-                loc = curl.syncLocationList(X_API_KEY, "/location");
-                writer.writeToFile(loc, "locations.json");
+                List<JsonObject> loc = curl.syncLists(GlobalHelper.X_API_KEY, GlobalHelper.CURL_LOCATION_PATH);
+                writer.writeToFile(loc, GlobalHelper.CURL_LOCATION_FILENAME);
                 System.out.println("Location curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/locations.json ...");
 
-                List<JsonObject> listStat = curl.syncListingStatusList(X_API_KEY, "/listingStatus");
-                writer.writeToFile(listStat, "listingstatus.json");
+                List<JsonObject> listStat = curl.syncLists(GlobalHelper.X_API_KEY, GlobalHelper.CURL_LISTINGSTATUS_PATH);
+                writer.writeToFile(listStat, GlobalHelper.CURL_LISTINGSTATUS_FILENAME);
                 System.out.println("ListingStatus curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/listingstatus.json ...");
 
-                List<JsonObject> market = curl.syncListingStatusList(X_API_KEY, "/marketplace");
-                writer.writeToFile(market, "marketplaces.json");
+                List<JsonObject> market = curl.syncLists(GlobalHelper.X_API_KEY, GlobalHelper.CURL_MARKETPLACE_PATH);
+                writer.writeToFile(market, GlobalHelper.CURL_MARKETPLACE_FILENAME);
                 System.out.println("MarketPlaces curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/marketplaces.json ...");
 
-                List<JsonObject> list = curl.syncListingList(X_API_KEY, "/listing");
-                writer.writeToFile(list, "listings.json");
+                List<JsonObject> list = curl.syncLists(GlobalHelper.X_API_KEY, GlobalHelper.CURL_LISTING_PATH);
+                writer.writeToFile(list, GlobalHelper.CURL_LISTING_FILENAME);
                 System.out.println("Listing curl command was succesfull...");
                 System.out.println("Input JSON has written to src/main/resources/json/listings.json ...");
 
@@ -76,8 +68,7 @@ public class DemoApplication {
         return args -> {
             try {
                 //read json and write to db
-                //List<Locations> inputList = new ArrayList<>();
-                try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "locations.json"))))) {
+                try (BufferedReader br = new BufferedReader((new FileReader(new File(GlobalHelper.JSON_FILES, GlobalHelper.CURL_LOCATION_FILENAME))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
                         Locations location = locationsService.getFromJson(line);
@@ -99,8 +90,7 @@ public class DemoApplication {
         return args -> {
             try {
                 //read json and write to db
-                //List<Listings> inputList = new ArrayList<>();
-                try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "listingstatus.json"))))) {
+                try (BufferedReader br = new BufferedReader((new FileReader(new File(GlobalHelper.JSON_FILES, GlobalHelper.CURL_LISTINGSTATUS_FILENAME))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
                         ListingStatus listingStat = listingStatusService.getFromJson(line);
@@ -121,7 +111,7 @@ public class DemoApplication {
         return args -> {
             try {
                 //read json and write to db
-                try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "marketplaces.json"))))) {
+                try (BufferedReader br = new BufferedReader((new FileReader(new File(GlobalHelper.JSON_FILES, GlobalHelper.CURL_MARKETPLACE_FILENAME))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
                         MarketPlaces market = marketPlacesService.getFromJson(line);
@@ -143,7 +133,7 @@ public class DemoApplication {
             try {
                 //read json and write to db
                 Validation validation = new Validation(listingsService, listingStatusService, marketPlacesService, locationsService);
-                try (BufferedReader br = new BufferedReader((new FileReader(new File("src/main/resources/json/", "listings.json"))))) {
+                try (BufferedReader br = new BufferedReader((new FileReader(new File(GlobalHelper.JSON_FILES, GlobalHelper.CURL_LISTING_FILENAME))))) {
                     String line = "";
                     while ((line = br.readLine()) != null) {
                         Listings listing = listingsService.getFromJson(line);
@@ -154,7 +144,6 @@ public class DemoApplication {
                             } else {
                                 listingsService.addToNotValid(validation.getBadValues());
                             }
-
                         }
                     }
                 }
@@ -170,9 +159,10 @@ public class DemoApplication {
     @DependsOn("runnerListing")
     CommandLineRunner runnerCreateRiport(ListingsService listingsService, LocationsService locationsService, ListingStatusService listingStatusService, MarketPlacesService marketPlacesService, FtpClient ftpClient) {
         return args -> {
-            WriterHelper writer = new WriterHelper(listingsService,  locationsService,  listingStatusService,  marketPlacesService, ftpClient);
-            writer.createReportData( );
-
+            WriterHelper writer = new WriterHelper(listingsService, locationsService, listingStatusService, marketPlacesService, ftpClient);
+            writer.createReportData();
+            System.out.println("Program run is over...");
+            System.out.println("Created by PLP");
         };
 
     }

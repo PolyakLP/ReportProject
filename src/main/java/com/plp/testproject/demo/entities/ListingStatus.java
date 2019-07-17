@@ -9,11 +9,10 @@ import javax.persistence.*;
 @Data
 public class ListingStatus {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     private String status_name;
-
 
 }

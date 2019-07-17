@@ -43,7 +43,7 @@ public class WriterHelper {
 
     public void writeToFile(List<JsonObject> lists, String fileName) throws IOException {
         System.out.println("Start reading..." + fileName);
-        FileWriter writer = new FileWriter(new File("src/main/resources/json/", fileName));
+        FileWriter writer = new FileWriter(new File(GlobalHelper.JSON_FILES, fileName));
         for (JsonObject list : lists) {
             writer.write(list + System.lineSeparator());
         }
@@ -52,14 +52,14 @@ public class WriterHelper {
     }
 
     public void writeToReportJson(JsonArray array, String filename) throws IOException {
-        File reportJson = new File("src/main/resources/json/report/", filename);
+        File reportJson = new File(GlobalHelper.JSON_FILES_REPORT, filename);
         FileWriter writer = new FileWriter(reportJson);
         writer.write(array.toString());
         writer.close();
-        FtpClient client = new FtpClient();
-        client.open();
-        client.putFileToPath("/report/", reportJson);
-        client.close();
+//        FtpClient client = new FtpClient();
+//        client.open();
+//        client.putFileToPath(GlobalHelper.FTP_PATH, reportJson);
+//        client.close();
         System.out.println("report.json updated to FTP server");
     }
 
@@ -90,6 +90,7 @@ public class WriterHelper {
         String bestListerEmailMonths = this.listingsService.getBestListerEmailMonth(beginMonth, endMonth);
 
         JsonObject monthlyReport = new JsonObject();
+
         monthlyReport.addProperty("TotalEbayCount", totalEbayListingCountPerMonth);
         monthlyReport.addProperty("TotalEbayPrice", totalEbayListingPricePerMonth);
         monthlyReport.addProperty("AvgEbayPrice", avgEbayListingPriceMonths);
@@ -99,6 +100,7 @@ public class WriterHelper {
         monthlyReport.addProperty("BestListerEmail", bestListerEmailMonths);
 
         JsonObject report = new JsonObject();
+
         report.addProperty("TotalCount", totalListingCount);
         report.addProperty("TotalEbayCount", totalEbayListing);
         report.addProperty("TotalEbayPrice", totalEbayListingPrice);
@@ -107,6 +109,7 @@ public class WriterHelper {
         report.addProperty("TotalAmazonPrice", totalAmazonListingPrice);
         report.addProperty("AvgAmazonPrice", avarageAmazonListingPrice);
         report.addProperty("BestListerEmail", bestListerEmail);
+
         report.add("Monthly_04", monthlyReport);
 
         JsonArray array = new JsonArray();
