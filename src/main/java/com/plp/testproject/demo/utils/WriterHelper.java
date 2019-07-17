@@ -56,10 +56,15 @@ public class WriterHelper {
         FileWriter writer = new FileWriter(reportJson);
         writer.write(array.toString());
         writer.close();
-//        FtpClient client = new FtpClient();
-//        client.open();
-//        client.putFileToPath(GlobalHelper.FTP_PATH, reportJson);
-//        client.close();
+        FtpClient client = new FtpClient();
+        if (reportJson.exists()) {
+            client.open();
+            client.putFileToPath(GlobalHelper.FTP_PATH, reportJson);
+            client.close();
+        } else {
+            System.out.println("report.json not find in the project");
+        }
+
         System.out.println("report.json updated to FTP server");
     }
 
